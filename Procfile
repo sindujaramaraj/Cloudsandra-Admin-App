@@ -1,0 +1,1 @@
+adminconsole: node adminconsole.js
