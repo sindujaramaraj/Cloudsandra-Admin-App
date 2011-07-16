@@ -1,1 +1,1 @@
-adminconsole: node adminconsole.js
+web: node adminconsole.js
