@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html>
+	<head>
+		<title>Cloudsandra Admin Console</title>		
+	</head>
+	<body>
+		<div id="login" style="position:relative;top:40%;left:40%;align:center">
+			<h3>Cloudsandra Admin Console</h3>
+			<p><input type="text" id="token" title="Token" value="q4t9YF3kht"></input></p>
+			<p><input type="text" id="accountid" title="Account id" value="dc96bf6e-465e-4723-8b7d-2eda8a6c769f"></input></p>
+			<p><button onclick="start()">Proceed</button>
+		</div>
+		
+		<div id="adminConsole">
+			<!--p><button onclick="addConsole()">Add Console</button></p-->
+			<div id="consoles"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/console.js"></script>
+	<script type="text/javascript" src="js/process.js"></script>
+	<script src="nowjs/now.js"></script>
+</html>

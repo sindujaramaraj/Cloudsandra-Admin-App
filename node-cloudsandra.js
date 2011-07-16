@@ -30,7 +30,7 @@ CloudsandraApi.prototype.parseForDisplay = function (jsonObject) {
 */
 CloudsandraApi.prototype.createColumnFamily = function (cfName, cfType, requestCallback) {
 	
-	this.post(['COLUMNFAMILY', cfName, cfType], null, null, function (response) {
+	this.now.post(['COLUMNFAMILY', cfName, cfType], null, null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -48,7 +48,7 @@ CloudsandraApi.prototype.createColumn = function (cfName, cName, cType, requestC
 		isIndex : 'false'
 	};
 
-	this.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
+	this.now.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -66,7 +66,7 @@ CloudsandraApi.prototype.createIndexedColumn = function (cfName, cName, cType, r
 		isIndex : 'true'
 	};
 
-	this.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
+	this.now.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -84,7 +84,7 @@ CloudsandraApi.prototype.removeIndexedColumn = function (cfName, cName, requestC
 		isIndex : 'false'
 	};
 
-	this.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
+	this.now.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -97,8 +97,8 @@ CloudsandraApi.prototype.removeIndexedColumn = function (cfName, cName, requestC
 * http://api.cloudsandra.net/v0.3/COLUMNFAMILY/{cfname}
 */
 CloudsandraApi.prototype.getColumnFamilyDescription = function (cfName, requestCallback) {
-
-	this.get(['COLUMNFAMILY', cfName], null, function (response) {
+	//sys.puts(sys.inspect(this));
+	this.now.get(['COLUMNFAMILY', cfName], null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -112,7 +112,7 @@ CloudsandraApi.prototype.getColumnFamilyDescription = function (cfName, requestC
 */
 CloudsandraApi.prototype.getColumnFamilies = function (requestCallback) {
 
-	this.get(['COLUMNFAMILY'], null, function (response) {
+	this.now.get(['COLUMNFAMILY'], null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -132,7 +132,7 @@ CloudsandraApi.prototype.postData = function (cfName, rowKey, postParams, ttl, r
 	
 	if (ttl == undefined) {
 	
-		this.post(['DATA', cfName, rowKey], getParams, postParams, function (response) {
+		this.now.post(['DATA', cfName, rowKey], getParams, postParams, function (response) {
 			requestCallback(response);
 		});
 		
@@ -140,7 +140,7 @@ CloudsandraApi.prototype.postData = function (cfName, rowKey, postParams, ttl, r
 	
 		getParams['ttl'] = ttl;
 		
-		this.post(['DATA', cfName, rowKey], getParams, postParams, function (response) {
+		this.now.post(['DATA', cfName, rowKey], getParams, postParams, function (response) {
 			requestCallback(response);
 		});
 		
@@ -160,7 +160,7 @@ CloudsandraApi.prototype.postBulkData = function (cfName, jsonStringObject, requ
 		body: jsonStringObject
 	};
 
-	this.post(['DATA', cfName], null, postParams, function (response) {
+	this.now.post(['DATA', cfName], null, postParams, function (response) {
 		requestCallback(response);
 	});
 
@@ -174,7 +174,7 @@ CloudsandraApi.prototype.postBulkData = function (cfName, jsonStringObject, requ
 */
 CloudsandraApi.prototype.getRow = function(cfName, rowKey, requestCallback) {
 	
-	this.get(['DATA', cfName, rowKey], null, function (response) {
+	this.now.get(['DATA', cfName, rowKey], null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -198,7 +198,7 @@ CloudsandraApi.prototype.paginateRow = function (cfName, rowKey, fromKey, limit,
 		getParams['fromKey'] = fromKey;	
 	} 
 		
-	this.get(['DATA', cfName, rowKey], getParams, function (response) {
+	this.now.get(['DATA', cfName, rowKey], getParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -212,7 +212,7 @@ CloudsandraApi.prototype.paginateRow = function (cfName, rowKey, fromKey, limit,
 */
 CloudsandraApi.prototype.deleteDataFromRow = function (cfName, rowKey, cName, requestCallback) {
 	
-	this.del(['DATA', cfName, rowKey, cName], null, null, function (response) {
+	this.now.del(['DATA', cfName, rowKey, cName], null, null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -226,7 +226,7 @@ CloudsandraApi.prototype.deleteDataFromRow = function (cfName, rowKey, cName, re
 */
 CloudsandraApi.prototype.deleteRow = function (cfName, rowKey, requestCallback) {
 	
-	this.del(['DATA', cfName, rowKey], null, null, function (response) {
+	this.now.del(['DATA', cfName, rowKey], null, null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -240,7 +240,7 @@ CloudsandraApi.prototype.deleteRow = function (cfName, rowKey, requestCallback) 
 */
 CloudsandraApi.prototype.deleteColumnFamily = function (cfName, requestCallback) {
 	
-	this.del(['COLUMNFAMILY', cfName], null, null, function (response) {
+	this.now.del(['COLUMNFAMILY', cfName], null, null, function (response) {
 		requestCallback(response);
 	});
 	
@@ -258,7 +258,7 @@ CloudsandraApi.prototype.queryCQL = function (cfName, cql, requestCallback) {
 		query : cql
 	};
 	
-	this.get(['CQL', cfName], getParams, function (response) {
+	this.now.get(['CQL', cfName], getParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -276,7 +276,7 @@ CloudsandraApi.prototype.incrementCount = function (rowKey, cName, value, reques
 		'increment' : value
 	};
 
-	this.post(['COUNTER', rowKey, cName], null, postParams, function (response) {
+	this.now.post(['COUNTER', rowKey, cName], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -294,7 +294,7 @@ CloudsandraApi.prototype.decrementCount = function (rowKey, cName, value, reques
 		'decrement' : value
 	};
 
-	this.post(['COUNTER', rowKey, cName], null, postParams, function (response) {
+	this.now.post(['COUNTER', rowKey, cName], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -308,7 +308,7 @@ CloudsandraApi.prototype.decrementCount = function (rowKey, cName, value, reques
 */
 CloudsandraApi.prototype.getCount = function (rowKey, cName, requestCallback) {
 	
-	this.get(['COUNTER', rowKey, cName], null, function (response) {
+	this.now.get(['COUNTER', rowKey, cName], null, function (response) {
 		requestCallback(response);
 	});
 
@@ -322,7 +322,7 @@ CloudsandraApi.prototype.getCount = function (rowKey, cName, requestCallback) {
 */
 CloudsandraApi.prototype.mapReduceTable = function (table, postParams, requestCallback) {
 	
-	this.post(['MAPREDUCE', 'table', table], null, postParams, function (response) {
+	this.now.post(['MAPREDUCE', 'table', table], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -337,7 +337,7 @@ CloudsandraApi.prototype.mapReduceTable = function (table, postParams, requestCa
 */
 CloudsandraApi.prototype.mapReduceJob = function (postParams, requestCallback) {
 	
-	this.post(['MAPREDUCE', 'job'], null, postParams, function (response) {
+	this.now.post(['MAPREDUCE', 'job'], null, postParams, function (response) {
 		requestCallback(response);
 	});
 	
@@ -410,11 +410,11 @@ CloudsandraApi.prototype.configureHttp = function (requestMethod, uriParams, get
 	var options = {
 		host: simpleRestClient.host,
 		port: simpleRestClient.port,
-		path: simpleRestClient.version + this.pathBuilder(uriParams, getParams),
+		path: simpleRestClient.version + this.now.pathBuilder(uriParams, getParams),
 		method: requestMethod,
 		headers: {
 		  	'Content-Type': simpleRestClient.contentType,
-		  	'Authorization':  this.authenticate(simpleRestClient.username, simpleRestClient.password)
+		  	'Authorization':  this.now.authenticate(simpleRestClient.username, simpleRestClient.password)
 		}
 	};
 	
@@ -427,7 +427,7 @@ CloudsandraApi.prototype.pathBuilder = function (uriParams, getParams) {
 	var path;
 
 	if (uriParams != undefined) {
-		path = this.segmentBuilder(uriParams);
+		path = this.now.segmentBuilder(uriParams);
 	} 
 		
 	if (getParams != undefined) {
@@ -466,10 +466,10 @@ CloudsandraApi.prototype.segmentBuilder = function (uriParams) {
 
 CloudsandraApi.prototype.post = function (uriParams, getParams, postParams, callback) {
 						
-	var options = this.configureHttp('POST', uriParams, getParams);
+	var options = this.now.configureHttp('POST', uriParams, getParams);
 	var queryString = querystring.stringify(postParams);
 
-	this.makePostRequest(options, queryString, uriParams, getParams, postParams, function (response) {
+	this.now.makePostRequest(options, queryString, uriParams, getParams, postParams, function (response) {
 		callback(response);
 	});
 
@@ -477,9 +477,9 @@ CloudsandraApi.prototype.post = function (uriParams, getParams, postParams, call
 
 CloudsandraApi.prototype.get = function (uriParams, getParams, callback) {
 
-	var options = this.configureHttp('GET', uriParams, getParams);
+	var options = this.now.configureHttp('GET', uriParams, getParams);
 
-	this.makeGetRequest(options, uriParams, getParams, function (response) {
+	this.now.makeGetRequest(options, uriParams, getParams, function (response) {
 		callback(response);
 	});
 
@@ -487,10 +487,10 @@ CloudsandraApi.prototype.get = function (uriParams, getParams, callback) {
 
 CloudsandraApi.prototype.del = function (uriParams, getParams, postParams, callback) {
 		
-	var options = this.configureHttp('DELETE', uriParams, getParams);
+	var options = this.now.configureHttp('DELETE', uriParams, getParams);
 	var queryString = querystring.stringify(postParams);
 
-	this.makeDeleteRequest(options, queryString, uriParams, getParams, postParams, function (response) {
+	this.now.makeDeleteRequest(options, queryString, uriParams, getParams, postParams, function (response) {
 		callback(response);
 	});
 
@@ -498,7 +498,7 @@ CloudsandraApi.prototype.del = function (uriParams, getParams, postParams, callb
 
 CloudsandraApi.prototype.makePostRequest = function (options, queryString, uriParams, getParams, postParams, callback) {
 
-	console.log('hitting url: ' + simpleRestClient.host + simpleRestClient.version + this.pathBuilder(uriParams, getParams));
+	console.log('hitting url: ' + simpleRestClient.host + simpleRestClient.version + this.now.pathBuilder(uriParams, getParams));
 	console.log('post string: ' + queryString);
 	
 	if (postParams && postParams.body) {

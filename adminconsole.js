@@ -1,21 +1,13 @@
-var http = require('http');
-var api = require('./node-cloudsandra.js');
+var api = require('./node-cloudsandra.js'),
+	express = require('express'),
+	index;
 
-var server = http.createServer(function(req, res) {
-	console.log('Reached sever');
-	var cloudsandraAPI = new api.CloudsandraApi();
-	cloudsandraAPI.setUsername("q4t9YF3kht");
-	cloudsandraAPI.setPassword("dc96bf6e-465e-4723-8b7d-2eda8a6c769f");
-	cloudsandraAPI.getColumnFamilies(callback_display(res));
-});
-
+var cloudsandraAPI = new api.CloudsandraApi();
+var server = express.createServer();
+server.use(express.static(__dirname + '/public'));
 server.listen("9999");
 console.log("Server is running at port 9999...");
-
-function callback_display(response) {
-	return function(dbresponse) {
-		console.log(dbresponse);
-		response.writeHead(200, {"Content-Type": "text/html"});
-		response.end(dbresponse);
-	}	
+var everyone = require('now').initialize(server);
+for (var method in cloudsandraAPI) {
+	everyone.now[method] = cloudsandraAPI[method];
 }
