@@ -18,6 +18,23 @@ body {
 	color: #000000
 }
 
+.clear {
+	clear: both
+}
+
+.spacer {
+	clear: both;
+	height: 5px;
+}
+
+.right {
+	float: right
+}
+
+.left {
+	float: left;
+}
+
 #login {
 	margin-top: 15%;
 }
@@ -26,13 +43,16 @@ body {
 	font-size: 1.7em;
 }
 
-#adminConsole a {
+#adminConsole {
+	padding: 0 10px;
+}
+#adminConsole #consoleHeader a {
 	color: #665874;
 	margin-top: 10px;
 	margin-right: 10px;
 }
 
-#adminConsole a:hover {
+#adminConsole #consoleHeader a:hover {
 	color: #734D99
 }
 
@@ -44,6 +64,74 @@ body {
 	top: 15%;
 }
 
+
+#workarea .columnsDisplay, #workarea .cfDataDisplay {
+	background: #ffffff;
+}
+.columnsTable td {
+	cursor: hand;	
+}
+
+.columnsTable td, .columnsTable th {
+	border: 2px solid #231D2B;
+	background-color: #DCD9DE;
+}
+
+.columnsTable .selectedRow td {
+	background-color: #231D2B;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+#workarea p {
+	color: #231D2B;
+}
+
+#workarea .note {
+	background-color: #DCD9DE;
+	color: #231D2B;
+	font-weight:bold;
+	font-size: 12px;
+}
+.cfDisplayTable tr {
+	margin-bottom:7px;
+}
+
+.cfDisplayTable td {
+	border: 2px solid #231D2B;
+}
+
+.cfDisplayTable td.rowkey {
+	background-color: #DCD9DE;
+}
+
+.cfDisplayTable div.keyvalueContainer {
+	padding-bottom: 7px;
+}
+
+.cfDisplayTable div.keyvalue {
+	background-color: #FAF8A0;
+	padding: 7px;
+	float:left;
+	margin-left: 7px;
+	margin-top: 7px;
+	border: 1px solid black;
+}
+
+.cfDisplayTable div.keyvalue span {
+	padding: 7px;
+}
+
+.cfDisplayTable div.keyvalue span.value {
+	border-left: 1px solid black;
+}
+
+.optionButtons {
+	xdisplay: none;
+}
+
+<!-- jquery -->
+
 .ui-progressbar-value {
 	background-image: url(images/pbar-ani.gif);
 }
@@ -52,6 +140,7 @@ body {
 	margin-right: 10px;
 }
 
-#toolbar .ui-button-text-only .ui-button-text {
+#workarea .ui-button-text-only .ui-button-text, #toolbar .ui-button-text-only .ui-button-text {
 	padding: 3px 10px;
 	font-size: 15px;
+}

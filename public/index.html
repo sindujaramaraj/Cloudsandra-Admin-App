@@ -15,8 +15,8 @@
 	<body class="blackbg">
 		<div id="login" align="center">
 			<h1 class="loginTitle">Cloudsandra Admin Console</h1>
-			<p><input type="text" id="token" title="Token" value="q4t9YF3kht" size=12></input></p>
-			<p><input type="password" id="accountid" title="Account id" value="dc96bf6e-465e-4723-8b7d-2eda8a6c769f" size=40></input></p>
+			<p><input type="text" id="token" title="Token" size=12></input></p>
+			<p><input type="password" id="accountid" title="Account id" size=40></input></p>
 			<p><button onclick="start()">Proceed</button>
 		</div>
 		
@@ -62,15 +62,22 @@
 				<p>
 					<label>Index </label>
 					<select id="indexSelect">
-						<option value=true>Yes</option>
-						<option value=false>No</option>
+						<option value="y">Yes</option>
+						<option value="n">No</option>
 					</select>
 				</p>
+			</div>
+			<div id="getDataDialog" title="Get Data">
+				<p>
+					<label>Row Key </label>
+					<input type="text" id="rowkeyInput"></input>
+				</p> 
 			</div>
 		</div>
 	</body>
 	<script type="text/javascript" src="js/console.js"></script>
 	<script type="text/javascript" src="js/process.js"></script>
+	<script type="text/javascript" src="js/cfrow.js"></script>
 	<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
 	<script src="nowjs/now.js"></script>

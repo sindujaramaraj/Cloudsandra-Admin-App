@@ -91,6 +91,24 @@ CloudsandraApi.prototype.removeIndexedColumn = function (cfName, cName, requestC
 };
 
 /**
+*
+* Removes an Indexed Column from a Column Family
+* 
+* http://api.cloudsandra.net/v0.3/COLUMN/{cfName}/{cName}/{cType}
+*/
+CloudsandraApi.prototype.removeIndexedColumn = function (cfName, cName, requestCallback) {
+	
+	var postParams = {
+		isIndex : 'false'
+	};
+
+	this.now.post(['COLUMN', cfName, cName, cType], null, postParams, function (response) {
+		requestCallback(response);
+	});
+	
+};
+
+/**
 * 
 * Returns a Column Family Description
 *
