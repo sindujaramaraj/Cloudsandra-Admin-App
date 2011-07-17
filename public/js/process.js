@@ -12,11 +12,20 @@ function start() {
 }
 
 function hideLogin() {
+	$("#progressbar").progressbar({
+		value:100
+	});
+	document.body.className = "whitebg";
 	document.getElementById("login").style.display =  "none";
+	document.getElementById("adminConsole").style.display =  "block";
+	document.getElementById("token").value = "";
+	document.getElementById("accountid").value = "";
 }
 
 function showLogin() {
+	document.body.className = "blackbg";
 	document.getElementById("login").style.display = "block";
+	document.getElementById("adminConsole").style.display =  "none";
 }
 
 function addConsole() {
@@ -38,6 +47,12 @@ function toObject(jsonString) {
 	}
 }
 
-function addData(consoleIndex) {
-	window.consoles[consoleIndex].addData();
+function takeAction(action, consoleIndex) {
+	window.consoles[consoleIndex][action]();
+}
+
+function logout() {
+	now.setUsername("");
+	now.setPassword("");
+	delete window.consoles; 
 }

@@ -5,7 +5,7 @@ var api = require('./node-cloudsandra.js'),
 var cloudsandraAPI = new api.CloudsandraApi();
 var server = express.createServer();
 server.use(express.static(__dirname + '/public'));
-server.listen(process.env.PORT || 3000);
+server.listen(3000);
 console.log("Server is running...");
 var everyone = require('now').initialize(server);
 for (var method in cloudsandraAPI) {

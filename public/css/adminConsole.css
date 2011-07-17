@@ -1,0 +1,57 @@
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-family: Arial,'Helvetica Neue',Helvetica,sans-serif;
+	background: #000000;
+	color: #ffffff
+}
+
+.blackbg {
+	background: #000000;
+	color: #ffffff
+}
+
+.whitebg {
+	background: #ffffff;
+	color: #000000
+}
+
+#login {
+	margin-top: 15%;
+}
+
+#login input {
+	font-size: 1.7em;
+}
+
+#adminConsole a {
+	color: #665874;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+#adminConsole a:hover {
+	color: #734D99
+}
+
+#toolbar {
+	padding: 4px 3px;
+}
+
+#progressbar {
+	top: 15%;
+}
+
+.ui-progressbar-value {
+	background-image: url(images/pbar-ani.gif);
+}
+
+#toolbar .ui-button {
+	margin-right: 10px;
+}
+
+#toolbar .ui-button-text-only .ui-button-text {
+	padding: 3px 10px;
+	font-size: 15px;
