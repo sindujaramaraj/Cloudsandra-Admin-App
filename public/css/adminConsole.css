@@ -88,8 +88,7 @@ body {
 }
 
 #workarea .note {
-	background-color: #DCD9DE;
-	color: #231D2B;
+	color: red;
 	font-weight:bold;
 	font-size: 12px;
 }
@@ -128,6 +127,10 @@ body {
 
 .optionButtons {
 	xdisplay: none;
+}
+
+#rowKeyContainer {
+	display: none
 }
 
 <!-- jquery -->

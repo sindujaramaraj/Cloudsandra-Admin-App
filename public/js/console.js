@@ -9,7 +9,7 @@ Console._CONSOLE_TEMPLATE = '<div id="columnFamiliesDisplay">'
 							+'<div>'
 							+	'<div id="toolbar" class="ui-widget-header ui-corner-all left">'
 							+		'<label>Column Families: </label>'
-							+		'<select id="cfSelect_consoleIndex" onmousedown="handleSelectCF(consoleIndex, this.value)">selectoptions</select>'
+							+		'<select id="cfSelect_consoleIndex">selectoptions</select>'
 							+	'</div>'
 							+	'<div id="toolbar" class="ui-widget-header ui-corner-all right">'
 							+		'<button onclick="takeAction(\'addColumnFamily\', consoleIndex)">Add Column Family</button>'
@@ -36,6 +36,7 @@ Console.prototype.getIndex = function() {
 }
 
 Console.prototype.init = function() {
+	this._dataLoaded = false;
 	this._selectedColumnFamily = null;
 	this._console = null;
 	this._consoleId = "console_" + this._index;
@@ -57,7 +58,6 @@ Console.prototype._displayColumnFamiles = function(responseObj, selectedCF) {
 	document.getElementById("consoles").appendChild(newConsole);
 	this._console = newConsole;
 	this._updateView(responseObj);
-	hideProgressbar();
 }
 
 Console.prototype._updateView = function(responseObj) {
@@ -71,7 +71,7 @@ Console.prototype._updateView = function(responseObj) {
 		
 		optionStr += "<option value='" + columnFamily.name + "' "
 					+ (columnFamily.name == this._selectedColumnFamily ?"selected " : "")
-					+ ">" + columnFamily.name + "</option>";
+					+ " onclick='handleSelectCF(consoleIndex, this.value)'>" + columnFamily.name + "</option>";
 	}
 	var html = Console._CONSOLE_TEMPLATE.replace("selectoptions", optionStr);
 	html = html.replace(/consoleIndex/g, this._index);
@@ -85,11 +85,18 @@ Console.prototype._updateView = function(responseObj) {
 }
 
 Console.prototype._clearCurrentView = function() {
+	removeRowOptions();
 	$("#" + this._consoleId).empty();
 }
 
 Console.prototype.getColumnFamily = function(columnFamily) {
 	this._selectedColumnFamily = columnFamily;
+	this._dataLoaded = false;
+	this._consoleModel.invalidateData();
+	//clear view
+	removeRowOptions();
+	$("#columns_" + this._index).empty();
+	$("#cfData_" + this._index).empty();
 	this._api.getColumnFamilyDescription(columnFamily, callback_displayColumnFamily(this));
 }
 
@@ -97,6 +104,7 @@ function callback_displayColumnFamily(instance) {
 	return function(response) {
 		var responseObj = toObject(response);
 		instance._consoleModel.setColumnsData(responseObj);
+		this._dataLoaded = false;
 		instance._displayColumnFamily(responseObj);
 	}
 }
@@ -156,7 +164,6 @@ function callback_addColumnFamily(instance) {
 		cfTypeElement.selectedIndex = 0;
 		//TODO handle when column family name is empty
 		$(this).dialog("close");
-		showProgressbar();
 	}
 }
 
@@ -171,7 +178,6 @@ function callback_create(instance, cfName) {
 		//get current colfamily list and display the created family list
 		instance._clearCurrentView();
 		instance._api.getColumnFamilies(callback_displayColumnFamilies(instance, cfName));
-		hideProgressbar();
 	}
 }
 
@@ -185,6 +191,7 @@ Console.prototype.deleteColumnFamily = function() {
 
 Console.prototype.refresh = function() {
 	this._clearCurrentView();
+	this._dataLoaded = false;
 	this._api.getColumnFamilies(callback_displayColumnFamilies(this));
 }
 
@@ -249,11 +256,9 @@ Console.prototype.showData = function() {
 	if (this._dataLoaded) {
 		return;
 	}
+	this._dataLoaded = true;
 	var colDataTabId = "cfData_" + this._index;
-	var html = '<p><button onclick="takeAction(\'addData\', consoleIndex)">Add Data</button>'
-			+ '<button onclick="takeAction(\'getData\', consoleIndex)">Get Row Data</button>'
-			+ '<button onclick="takeAction(\'getAllData\', consoleIndex)">Get All Data</button>'
-			+ '<button class="optionButtons" id="optionButtons_consoleIndex"></button></p>'
+	var html = '<p><button onclick="takeAction(\'addRow\', consoleIndex)">Add Row</button></p>'
 			+ "<div id='cfDataDisplayArea_consoleIndex'></div>";
 	html = html.replace(/consoleIndex/g, this._index);
 	$("#" + colDataTabId).append(html);
@@ -262,7 +267,7 @@ Console.prototype.showData = function() {
 				$("button").button();
 			})
 		);
-	this._dataLoaded = true;
+	this.getAllData();
 }
 
 Console.prototype.deleteColumn = function() {
@@ -273,10 +278,29 @@ Console.prototype.deleteColumn = function() {
 	}
 }
 
-Console.prototype.addData = function() {
-	var authorsData = '{"Arin Sarkissian":[{numPosts:11,twitter:"phatduckk",email:"arin@example.com",bio:"bla bla bla"}]}';
-	this._api.postData("Authors", "sinduja", postParams, null, function(response) {
-		alert(response)});
+Console.prototype.addRow = function() {
+	$("#rowKeyContainer").show();
+	$("#deleteDataRow").click(callback_deleteDataRow);
+	$("#addDataRow").click(callback_addDataRow);
+	$("#addRowDataDialog").dialog({
+		modal: true,
+		width: 585,
+		buttons: [
+		          	{
+		          		text: "Ok",
+		          		click: callback_addRow(this)
+		          	}
+		        ],
+		 beforeClose: resetAddDataDialog
+	});
+}
+
+function callback_addRow(instance) {
+	return function() {
+		var data = getValueFromAddDataDialog();
+		instance.addData(data.rowKey, data.rowData);
+		$("#addRowDataDialog").dialog("close");
+	}
 }
 
 Console.prototype.getData = function() {
@@ -311,11 +335,13 @@ function callback_getAllData(instance) {
 		var responseObj = toObject(response);
 		instance._consoleModel.setCFData(responseObj);
 		instance._displayCFData(toObject(response));
+		this._dataLoaded = true;
 	}
 }
 
 Console.prototype._displayCFData = function(responseObj) {
 	if (this._cfRows) {
+		removeRowOptions();
 		$("#cfDataDisplayArea_" + this._index).empty();
 		delete this._cfRows;
 	}
@@ -331,15 +357,7 @@ Console.prototype._displayCFData = function(responseObj) {
 }
 
 Console.prototype.selectDataRow = function(rowKey) {
-	if (!this._optionButton) {
-		$("#optionButtons_" + this._index).button({
-			icons: {
-				primary: "ui-icon-trash"
-			}
-		});
-		this._optionButton = document.getElementById("optionButtons_" + this._index);
-	}
-	this._cfRows[rowKey].showOptions(this._optionButton);
+	this._cfRows[rowKey].showOptions();
 }
 
 Console.prototype.deleteRow = function(rowKey) {
@@ -352,54 +370,20 @@ function callback_deleteRow(instance) {
 	}
 }
 
-var postParams = "{'columnName' : '{value}','indexedColumnName': '{value}'}";
-
-
-var jsonStringObject = {"rowkeys": [
-                                    {
-                                    	"rowkey": "rk",
-                                    	"columns": [
-                                    	            {
-                                    	            	"columnname": "cn",
-                                    	            	"columnvalue": "cv",
-                                    	            	"ttl" : 60
-                                    	            },
-                                    	            {
-                                    	            	"columnname": "cn",
-                                    	            	"columnvalue": "cv",
-                                    	            	"ttl" : 60
-                                    	            }
-                                    	           ]
-                                    },
-                                    {
-                                    	"rowkey": "rk",
-                                    	"columns": [
-                                    	            {
-                                    	            	"columnname": "cn",
-                                    	            	"columnvalue": "cv"
-                                    	            },
-                                    	            {
-                                    	            	"columnname": "cn",
-                                    	            	"columnvalue": "cv"
-                                    	            }
-                                    	           ]
-                                    }
-                                   ]
-};
-
-
-function keyValuePair(key, value, indexed, type) {
-	
+Console.prototype.addData = function(rowKey, data) {
+	this._api.postData(this._selectedColumnFamily, rowKey, data, null, callback_addData(this));
 }
 
-function column(columnFamily, name, keyValuePairs, indexed, type) {
-	
+function callback_addData(instance) {
+	return function(response) {
+		var responseObj = toObject(response);
+		if (responseObj.message == "Success") {
+			instance.getAllData();			
+		} else {
+			alert(response)
+		}
+	}
 }
-
-function columnFamily(name, type, columns) {
-	
-}
-
 
 function ConsoleModel(model) {
 	this._model = model;
@@ -425,4 +409,11 @@ ConsoleModel.prototype.getColumnDataByIndex = function(index) {
 
 ConsoleModel.prototype.setCFData = function(cfData) {
 	this._cfData = cfData;
+}
+
+ConsoleModel.prototype.invalidateData = function() {
+	this._model = null;
+	this._columnsData = null;
+	this._cfData = null;
+	
 }

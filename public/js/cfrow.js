@@ -7,9 +7,12 @@ function CFRow(consoleIndex, rowData) {
 		if (name == "KEY") {
 			continue;
 		}
-		this._keyValuePairs.push(new KeyValuePair(name, this._data[name]));
+		this._keyValuePairs.push(new KeyValuePair(this._key, name, this._data[name]));
 	}
 }
+
+CFRow._DATAROWTEMPLATE = '<td><input id="addRowKey_rowIndex" type="text"></input></td>'
+							+	'<td><input id="addRowValue_rowIndex" type="text"></input></td>';
 
 CFRow.prototype.getKey = function() {
 	return this._key;
@@ -17,7 +20,7 @@ CFRow.prototype.getKey = function() {
 
 CFRow.prototype.getHtml = function() {
 	var html = "<tr>";
-	html += "<td class='rowkey' id='rowKey_" + this._key + "' onclick='selectDataRow(" + this._consoleIndex + ",\"" + this._key + "\")'>" + this._key + "</td>";
+	html += "<td class='rowkey' id='rowKey_" + this._key + "'><span onclick='selectDataRow(" + this._consoleIndex + ",\"" + this._key + "\")'>" + this._key + "</span></td>";
 	html += "<td class='rowvalue'>"
 				+ "<div class='keyvalueContainer'>";
 	for (idx = 0, len = this._keyValuePairs.length; idx < len; idx++) {
@@ -28,16 +31,28 @@ CFRow.prototype.getHtml = function() {
 				
 }
 
-CFRow.prototype.showOptions = function(optionsButton) {
+CFRow.prototype.showOptions = function() {
 	var rowKeyElement = document.getElementById('rowKey_' + this._key);
-	optionsButton.parentNode.removeChild(optionsButton);
-	optionsButton.onclick = callback_optionButtonClick(this);
-	rowKeyElement.appendChild(optionsButton);
+	var rowOptions = document.getElementById("rowOptions");
+	rowOptions.parentNode.removeChild(rowOptions);
+	//add listener
+	for (var idx = 0, len = rowOptions.options; idx < len; idx++) {
+		//rowOptions.options[idx].onclick = callback_optionClick(this); 
+	}
+	rowKeyElement.appendChild(rowOptions);
+	$("#deleteRowOption").click(callback_deleteOptionClick(this));
+	$("#addDataOption").click(callback_addDataOptionClick(this));
 }
 
-function callback_optionButtonClick(instance) {
+function callback_deleteOptionClick(instance) {
 	return function() {
 		instance.deleteRow();
+	}
+}
+
+function callback_addDataOptionClick(instance) {
+	return function() {
+		instance.addData();
 	}
 }
 
@@ -45,7 +60,39 @@ CFRow.prototype.deleteRow = function() {
 	window.consoles[this._consoleIndex].deleteRow(this._key);
 }
 
-function KeyValuePair(key, value) {
+CFRow.prototype.addData = function() {
+	$("#deleteDataRow").click(callback_deleteDataRow);
+	$("#addDataRow").click(callback_addDataRow);
+	$("#addRowDataDialog").dialog({
+		modal: true,
+		width: 585,
+		buttons: [
+		          	{
+		          		text: "Ok",
+		          		click: CFRowCallback_addData(this)
+		          	}
+		        ],
+		beforeClose: resetAddDataDialog
+	});
+}
+
+function CFRowCallback_addData(instance) {
+	return function() {
+		var data = getValueFromAddDataDialog().rowData;
+		removeRowOptions();
+		instance._addData(data);
+		$("#addRowDataDialog").dialog("close");
+	}
+}
+
+CFRow.prototype._addData = function(data) {
+	window.consoles[this._consoleIndex].addData(this._key, data);
+}
+
+
+
+function KeyValuePair(rowKey, key, value) {
+	this._rowKey = rowKey;
 	this._key = key;
 	this._value = value;
 }
