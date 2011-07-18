@@ -1,4 +1,5 @@
 function start() {
+	showLoading();	
 	var token = document.getElementById("token").value;
 	var accountId = document.getElementById("accountid").value;
 	//override username and token
@@ -17,6 +18,7 @@ function callback_validateLogin(response) {
 		 || (responseObj.status && status != 200)) {
 		logout();
 		showLoginError();
+		hideLoading();
 	} else {
 		hideLoginError();
 		hideLogin();
@@ -24,6 +26,19 @@ function callback_validateLogin(response) {
 		window.consoles = [];
 		addConsole();
 	}
+}
+
+function showLoading() {
+	document.getElementById("loader").className = "loading";
+	var overlay = document.getElementById("overlay"); 
+	overlay.className = "loading";
+	overlay.style.height = document.body.offsetHeight;
+	overlay.style.width = document.body.offsetWidth;
+}
+
+function hideLoading() {
+	document.getElementById("loader").className = "";
+	document.getElementById("overlay").className = ""
 }
 
 function showLoginError() {

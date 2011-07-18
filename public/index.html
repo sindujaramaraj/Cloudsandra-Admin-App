@@ -17,7 +17,7 @@
 			<h1 class="loginTitle">Cloudsandra Admin Console</h1>
 			<p class="error"><label>Invalid Username/Password</label></p>
 			<p><input type="text" id="token" title="Username" value="Username" size=12></input></p>
-			<p><input type="password" id="accountid" title="Password" value="00000000000000000000000000000000000" size=40></input></p>
+			<p><input type="password" id="accountid" title="Password" value="" size=40></input></p>
 			<p><button onclick="start()">Proceed</button>
 		</div>
 		
@@ -107,6 +107,8 @@
 				</table>
 			</div>
 		</div>
+		<div id="loader"></div>
+		<div id="overlay"></div>
 	</body>
 	<script type="text/javascript" src="js/console.js"></script>
 	<script type="text/javascript" src="js/process.js"></script>

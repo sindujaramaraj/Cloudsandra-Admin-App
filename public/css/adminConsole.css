@@ -141,7 +141,7 @@ body {
 	font-size: 1.5em;
 }
 
-<!-- jquery -->
+/* jquery */
 
 .ui-progressbar-value {
 	background-image: url(images/pbar-ani.gif);
@@ -154,4 +154,38 @@ body {
 #workarea .ui-button-text-only .ui-button-text, #toolbar .ui-button-text-only .ui-button-text {
 	padding: 3px 10px;
 	font-size: 15px;
+}
+
+/* loader */
+
+#loader.loading {
+  background: url(images/spinner.gif) no-repeat center center;
+  position: absolute;
+  top: 49%;
+  left: 49%;
+  display: block;
+  z-index: 1002;
+}
+
+#loader {
+  border: 1px solid #ccc;
+  width: 25px;
+  height: 25px;
+  display:none;
+}
+
+#overlay {
+	display: none;
+	z-index: 1001;
+	height: 0px;
+	width: 0px;
+}
+
+#overlay.loading {
+	position:absolute;
+	top: 0;
+	left: 0;
+	display:block;
+	background: url("images/ui-bg_flat_0_eeeeee_40x100.png") repeat-x scroll 50% 50% #EEEEEE;
+	opacity: 0.3;
 }
