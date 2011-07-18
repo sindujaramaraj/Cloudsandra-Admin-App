@@ -106,6 +106,7 @@ body {
 
 .cfDisplayTable div.keyvalueContainer {
 	padding-bottom: 7px;
+	padding-right: 7px;
 }
 
 .cfDisplayTable div.keyvalue {
@@ -117,7 +118,7 @@ body {
 	border: 1px solid black;
 }
 
-.cfDisplayTable div.keyvalue span {
+.cfDisplayTable div.keyvalue span.key, .cfDisplayTable div.keyvalue span.value  {
 	padding: 7px;
 }
 
@@ -125,12 +126,19 @@ body {
 	border-left: 1px solid black;
 }
 
-.optionButtons {
-	xdisplay: none;
+.cfDisplayTable .ui-button {
+	border: 1px solid #231D2B; 
 }
 
 #rowKeyContainer {
-	display: none
+	display: none;
+}
+
+.error {
+	display: none;
+	color: red;
+	font-weight: bold;
+	font-size: 1.5em;
 }
 
 <!-- jquery -->

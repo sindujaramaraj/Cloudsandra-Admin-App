@@ -4,11 +4,34 @@ function start() {
 	//override username and token
 	now.setUsername(token);
 	now.setPassword(accountId);
-	
-	hideLogin();
-	//initialize console
-	window.consoles = [];
-	addConsole();
+	validateLogin();
+}
+
+function validateLogin() {
+	now.getColumnFamilies(callback_validateLogin);
+}
+
+function callback_validateLogin(response) {
+	var responseObj = toObject(response);
+	if ((responseObj.message && responseObj.message == "Unauthorized")
+		 || (responseObj.status && status != 200)) {
+		logout();
+		showLoginError();
+	} else {
+		hideLoginError();
+		hideLogin();
+		//initialize console
+		window.consoles = [];
+		addConsole();
+	}
+}
+
+function showLoginError() {
+	$(".error").show();
+}
+
+function hideLoginError() {
+	$(".error").hide();
 }
 
 function hideLogin() {
@@ -146,10 +169,28 @@ function resetAddDataDialog() {
 }
 
 function removeRowOptions() {
+	var templates = document.getElementById("templates")
 	var rowOptions = document.getElementById("rowOptions");
 	rowOptions.parentNode.removeChild(rowOptions);
-	document.getElementById("templates").appendChild(rowOptions);
+	templates.appendChild(rowOptions);
 	$("#deleteRowOption").unbind();
 	$("#addDataOption").unbind();
 	rowOptions.selectedIndex = 0;
+	
+	//reset deteDataBtn
+	var deleteDataBtn = document.getElementById("deleteDataBtn");
+	deleteDataBtn.parentNode.removeChild(deleteDataBtn);
+	templates.appendChild(deleteDataBtn);
+	$("#deleteDataBtn").unbind();
+}
+
+function selectData(consoleIndex, rowKey, key) {
+	window.consoles[consoleIndex].selectData(rowKey, key);
+}
+
+function resetAddCFDialog() {
+	var cfNameElement = document.getElementById("cfName");
+	var cfTypeElement = document.getElementById("cfSortingType");
+	cfNameElement.value = "";
+	cfTypeElement.selectedIndex = 0;
 }

@@ -15,14 +15,15 @@
 	<body class="blackbg">
 		<div id="login" align="center">
 			<h1 class="loginTitle">Cloudsandra Admin Console</h1>
-			<p><input type="text" id="token" title="Token" value="" size=12></input></p>
-			<p><input type="password" id="accountid" title="Account id" value="" size=40></input></p>
+			<p class="error"><label>Invalid Username/Password</label></p>
+			<p><input type="text" id="token" title="Username" value="Username" size=12></input></p>
+			<p><input type="password" id="accountid" title="Password" value="00000000000000000000000000000000000" size=40></input></p>
 			<p><button onclick="start()">Proceed</button>
 		</div>
 		
 		<div id="adminConsole" style="display:none">
 			<div id="consoleHeader" align="right">
-				<a id="logout" href="javascript:void(0)" onclick="logout()">Logout</a>
+				<a id="logout" href="" onclick="logout()">Logout</a>
 			</div>
 			<!--p><button onclick="addConsole()">Add Console</button></p-->
 			<div id="consoles"></div>
@@ -65,16 +66,21 @@
 					</select>
 				</p>
 			</div>
-			<div id="getDataDialog" title="Get Data">
-				<p>
-					<label>Row Key </label>
-					<input type="text" id="rowkeyInput"></input>
-				</p>
-			</div>
-			<select id="rowOptions">
-				<option id="addDataOption" value="addData">Add Data</option>
-				<option id="deleteRowOption" value="deleteRow">Delete</option>
+			<select id="rowOptionsx">
+				<option id="addDataOptionx" value="addData">Add Data</option>
+				<option id="deleteRowOptionx" value="deleteRow">Delete</option>
 			</select>
+			<button id="deleteDataBtn" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only">
+				<span class="ui-button-icon-primary ui-icon ui-icon-trash"></span>
+			</button>
+			<span id="rowOptions">
+				<button id="addDataOption" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only">
+					<span class="ui-button-icon-primary ui-icon ui-icon-pencil"></span>
+				</button>
+				<button id="deleteRowOption" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only">
+					<span class="ui-button-icon-primary ui-icon ui-icon-trash"></span>
+				</button>						
+			</span>
 			<select id="rowDataOptions">
 				<option value="edit">Edit</option>
 				<option value="delete">Delete</option>

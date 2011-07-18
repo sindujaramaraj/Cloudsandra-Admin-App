@@ -46,8 +46,13 @@ Console.prototype.init = function() {
 
 function callback_displayColumnFamilies(instance, selectedCF) {
 	return function(response) {
-		instance._displayColumnFamiles(toObject(response), selectedCF);
-		instance.getColumnFamily(selectedCF || instance._selectedColumnFamily);
+		var responseObj = toObject(response);
+		if (responseObj.columnfamilies) {
+			instance._displayColumnFamiles(toObject(response), selectedCF);
+			instance.getColumnFamily(selectedCF || instance._selectedColumnFamily);
+		} else {
+			alert(response);
+		}
 	}
 }
 
@@ -82,6 +87,9 @@ Console.prototype._updateView = function(responseObj) {
 				$("button").button();
 			})
 		);
+	if (!columnFamilies.length) {
+		$("#cfTabs_" + this._index).hide();
+	}
 }
 
 Console.prototype._clearCurrentView = function() {
@@ -115,8 +123,8 @@ Console.prototype._displayColumnFamily = function(responseObj) {
 	var html = "<span class='note'>*Click on a row to edit</span>";
 	html += "<p><button onclick='takeAction(\"addColumn\", consoleIndex)'>Add Column</button></p>";
 	html += "<div class='spacer'></div>";
-	if (responseObj.columns.length) {
-		var columns = responseObj.columns;
+	var columns = responseObj.columns || [];
+	if (columns.length) {
 		html += "<table class='columnsTable' id='columnsTable_consoleIndex' cellpadding=10>";
 		html += "<tr><th>Name</th><th>Type</th><th>Is Indexed</th></tr>";
 		for (var idx = 0, len = columns.length; idx < len; idx++) {
@@ -150,7 +158,8 @@ Console.prototype.addColumnFamily = function(responseObj) {
 		buttons: [{
 			text: "Ok",
 		    click: callback_addColumnFamily(this)
-		   }]
+		   }],
+		beforeClose: resetAddCFDialog
 	});
 }
 
@@ -203,7 +212,8 @@ Console.prototype.addColumn = function() {
 		buttons: [{
 			text: "Ok",
 		    click: callback_addColumn(this)    	
-		   }]
+		   }],
+		beforeClose: resetAddColumnDialog
 	});
 }
 
@@ -213,8 +223,6 @@ function callback_addColumn(instance) {
 		var colTypeElement = document.getElementById("colSortingType");
 		var indexElement = document.getElementById("indexSelect");
 		instance._createColumn(colNameElement.value, colTypeElement.value, indexElement.value == "y");
-		//reset
-		resetAddColumnDialog();
 		//TODO handle when column name is empty
 		$(this).dialog("close");
 	}
@@ -253,12 +261,12 @@ Console.prototype.selectRow = function(rowIndex) {
 
 
 Console.prototype.showData = function() {
-	if (this._dataLoaded) {
+	if (this._dataLoaded || !this._selectedColumnFamily) {
 		return;
 	}
-	this._dataLoaded = true;
 	var colDataTabId = "cfData_" + this._index;
-	var html = '<p><button onclick="takeAction(\'addRow\', consoleIndex)">Add Row</button></p>'
+	var html = '<p><button onclick="takeAction(\'addRow\', consoleIndex)">Add Row</button>'
+				+'<button onclick="takeAction(\'getAllData\', consoleIndex)">Refresh Data</button></p>'
 			+ "<div id='cfDataDisplayArea_consoleIndex'></div>";
 	html = html.replace(/consoleIndex/g, this._index);
 	$("#" + colDataTabId).append(html);
@@ -303,29 +311,6 @@ function callback_addRow(instance) {
 	}
 }
 
-Console.prototype.getData = function() {
-	$("#getDataDialog").dialog({
-		buttons: [{
-			text: "Ok",
-			click: callback_getData(this)
-		}]
-	});
-}
-
-function callback_getData(instance) {
-	return function() {
-		var rowkeyElement = document.getElementById("rowkeyInput");
-		instance._getRowData(rowkeyElement.value);
-		rowkeyElement.value = "";
-	}
-}
-
-Console.prototype._getRowData = function(rowKey) {
-	this._api.getRow(this._selectedColumnFamily, rowKey, function(response) {
-		alert(response);
-	});
-}
-
 Console.prototype.getAllData = function() {
 	this._api.queryCQL(this._selectedColumnFamily, "SELECT *", callback_getAllData(this));
 }
@@ -333,9 +318,13 @@ Console.prototype.getAllData = function() {
 function callback_getAllData(instance) {
 	return function(response) {
 		var responseObj = toObject(response);
-		instance._consoleModel.setCFData(responseObj);
-		instance._displayCFData(toObject(response));
-		this._dataLoaded = true;
+		if (typeof responseObj.message == "undefined") {
+			instance._consoleModel.setCFData(responseObj);
+			instance._displayCFData(toObject(response));			
+		} else {
+			alert("No Data!");
+		}
+		instance._dataLoaded = true;
 	}
 }
 
@@ -383,6 +372,14 @@ function callback_addData(instance) {
 			alert(response)
 		}
 	}
+}
+
+Console.prototype.selectData = function(rowKey, key) {
+	this._cfRows[rowKey].selectData(key);
+}
+
+Console.prototype.deleteData = function(rowKey, key) {
+	this._api.deleteDataFromRow(this._selectedColumnFamily, rowKey, key, callback_addData(this));
 }
 
 function ConsoleModel(model) {

@@ -2,12 +2,12 @@ function CFRow(consoleIndex, rowData) {
 	this._consoleIndex = consoleIndex;
 	this._data = rowData;
 	this._key = rowData.KEY;
-	this._keyValuePairs = [];
+	this._keyValuePairs = {};
 	for (var name in this._data) {
 		if (name == "KEY") {
 			continue;
 		}
-		this._keyValuePairs.push(new KeyValuePair(this._key, name, this._data[name]));
+		this._keyValuePairs[name] = new KeyValuePair(this._consoleIndex, this._key, name, this._data[name]);
 	}
 }
 
@@ -23,8 +23,8 @@ CFRow.prototype.getHtml = function() {
 	html += "<td class='rowkey' id='rowKey_" + this._key + "'><span onclick='selectDataRow(" + this._consoleIndex + ",\"" + this._key + "\")'>" + this._key + "</span></td>";
 	html += "<td class='rowvalue'>"
 				+ "<div class='keyvalueContainer'>";
-	for (idx = 0, len = this._keyValuePairs.length; idx < len; idx++) {
-		html += this._keyValuePairs[idx].getHtml(); 
+	for (var name in this._keyValuePairs) {
+		html += this._keyValuePairs[name].getHtml(); 
 	}
 	html += "<div class='clear'></div></div></td></tr>";
 	return html;
@@ -89,16 +89,40 @@ CFRow.prototype._addData = function(data) {
 	window.consoles[this._consoleIndex].addData(this._key, data);
 }
 
+CFRow.prototype.selectData = function(key) {
+	this._keyValuePairs[key].select();
+}
 
-
-function KeyValuePair(rowKey, key, value) {
+function KeyValuePair(consoleIndex, rowKey, key, value) {
+	this._consoleIndex = consoleIndex;
 	this._rowKey = rowKey;
 	this._key = key;
 	this._value = value;
+	this._id = "keyValuePair_" + this._consoleIndex + "_" + rowKey + key;
 }
 
 KeyValuePair.prototype.getHtml = function() {
-	var html = "<div class='keyvalue'><span class='key'>" + this._key + "</span>"
+	var html = "<div class='keyvalue' id='" + this._id + "'" 
+						+ " onclick='selectData("+ this._consoleIndex + ", \"" + this._rowKey + "\", \"" + this._key + "\")'>" 
+						+	"<span class='key'>" + this._key + "</span>"
 						+ "<span class='value'>" + this._value + "</span></div>";
 	return html;
+}
+
+KeyValuePair.prototype.select = function() {
+	var keyValueElement = document.getElementById(this._id);
+	var deleteBtn = document.getElementById("deleteDataBtn");
+	deleteBtn.parentNode.removeChild(deleteBtn);
+	keyValueElement.appendChild(deleteBtn);
+	$("#deleteDataBtn").click(KeyValuePairCallback_deleteButtonClick(this));
+}
+
+function KeyValuePairCallback_deleteButtonClick(instance) {
+	return function() {
+		instance.deleteData();
+	}
+}
+
+KeyValuePair.prototype.deleteData = function() {
+	window.consoles[this._consoleIndex].deleteData(this._rowKey, this._key);
 }
