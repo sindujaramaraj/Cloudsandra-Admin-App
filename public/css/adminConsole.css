@@ -188,4 +188,5 @@ body {
 	display:block;
 	background: url("images/ui-bg_flat_0_eeeeee_40x100.png") repeat-x scroll 50% 50% #EEEEEE;
 	opacity: 0.3;
+	filter: alpha(opacity=30);
 }
